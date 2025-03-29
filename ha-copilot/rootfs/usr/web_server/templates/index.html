@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root{
+            --r-margin-big     : 20px;
+            --r-margin-small   : 10px;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        /* 设置所有链接状态的颜色 */
+        a {
+            color: #212121; /* 默认颜色 */
+            text-decoration: none; /* 去掉下划线 */
+        }
+        .tab {
+            display: flex;
+            height: 36px;
+            align-items: center; /* 垂直居中 */
+            border-radius: 3px;
+            padding: 2px;
+            margin-top: var(--r-margin-small);
+            margin-left: var(--r-margin-big);
+            margin-right: var(--r-margin-big);
+            cursor: pointer;
+            text-decoration: none;
+            color: #212121;
+            box-sizing: border-box;
+        }
+        .tab.active {
+            background-color: #d1eefe;
+            color: #0288d1;
+        }
+        .left {
+            flex: 1;
+            display:flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+        .right {
+            flex: 4;
+            display:flex;
+            flex-direction: column;
+        }
+        .right_up ul {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            list-style: none; /* Ensure no bullets */
+        }
+        .right_up li {
+            margin-right: var(--r-margin-small);
+            list-style: none; /* Ensure no bullets */
+        } 
+        .right_down {
+            flex: 4;
+            padding: 2px;
+            margin: 20px;
+        }
+        .right-tab {
+            display: flex;
+            border-radius: 3px;
+            padding-right: var(--r-margin-small);
+            padding-left: var(--r-margin-small);
+            height: 36px;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+        .right-tab.active {
+            background-color: #d1eefe;
+            color: #0288d1;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .list-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--r-margin-small);
+            height: 36px;
+        }
+        .list-item span {
+            flex: 1;
+        }
+        .list-item button {
+            margin-left: var(--r-margin-big);
+        }
+        .list-item:hover {
+            background-color: #fafafa; /* 鼠标悬停时的背景色 */
+        }
+        .dialog {
+            display: none;
+            position: fixed;
+            width: 80%;
+            height: 80%;
+            z-index: 1001;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fafafa;
+            border: 0.5px solid rgba(0, 0, 0, 0.12);
+            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+        }
+        .border {
+            background-color: white; /* 设置背景色为白色 */
+            border: 0.5px solid rgba(0, 0, 0, 0.12); /* 设置边框为黑色实线，宽度为0.5像素 */
+            margin: var(--r-margin-big); /* 可选：添加外边距 */
+            height: calc(100% - 2 * var(--r-margin-big));
+            border-radius: 12px; /* 可选：添加圆角 */
+            display: flex;
+            flex-direction: column;
+        }
+        .block_divider {
+            width: 100%; /* 设置线宽为容器宽度 */
+            margin: 0px;
+            border: none;
+            border-top: 0.5px solid rgba(0, 0, 0, 0.12); /* 设置线的样式 */
+        }
+        .button-container {
+            display         : flex;
+            justify-content : flex-end;
+            margin-top      : var(--r-margin-small);
+            margin-bottom   : var(--r-margin-small);
+        }
+        .button-container button {
+            margin-left     : var(--r-margin-small);
+            margin-right    : var(--r-margin-small);
+        }
+        button {
+            position: relative; /* 为绝对定位提供参考 */
+            background-color: #0288d1; /* 按钮背景颜色 */
+            color: white; /* 按钮文字颜色 */
+            border: none; /* 移除边框 */
+            padding: 10px 20px; /* 内边距 */
+            text-align: center; /* 文字居中 */
+            text-decoration: none; /* 移除下划线 */
+            display: inline-block; /* 行内块元素 */
+            cursor: pointer; /* 鼠标指针样式 */
+            border-radius: 3px; /* 圆角 */
+            aspect-ratio: 5 / 1; /* 设置宽高比为3:1 */
+        }
+        button:hover {
+            box-shadow: 0 0 3px #212121; /* 添加阴影效果 */
+        }
+        #ListDialog-list {
+        list-style: none; /* 移除列表项的默认样式 */
+        padding: 0; /* 移除列表项的默认内边距 */
+        margin: 0; /* 移除列表项的默认外边距 */
+        }
+        #ListDialog-list li {
+            height: 36px; /* 设置列表项的高度 */
+            line-height: 36px; /* 设置行高，使文本垂直居中 */
+            padding: 0 var(--r-margin-big); /* 设置内边距，预留和边框的20px间距 */
+            display: flex; /* 使用弹性布局 */
+            justify-content: space-between; /* 使文本和复选框分别放在两端 */
+            align-items: center; /* 使文本和复选框垂直居中 */
+        }
+        #ListDialog-list li input[type="checkbox"] {
+            margin-left: auto; /* 将复选框推到右侧 */
+            width: 18px; /* 设置复选框的宽度 */
+            height: 18px; /* 设置复选框的高度 */
+        }
+
+        #ListDialog-list li:hover {
+            background-color: #fafafa; /* 鼠标悬停时的背景色 */
+        }
+        /* 定义滚动条的背景色 */
+        scrollbar {
+            width: 6px; /* 设置滚动条的宽度 */
+            background-color: white; /* 设置滚动条的背景色 */
+        }
+        /* 定义滚动条滑块的背景色和边框 */
+        scrollbar-thumb {
+            background-color: #e5e5e5; /* 设置滚动条滑块的背景色 */
+        }
+        /* 定义滚动条轨道的背景色和边框 */
+        crollbar-track {
+            background-color: white; /* 设置滚动条轨道的背景色 */
+        }
+        /* 显示滚动条的箭头 */
+        scrollbar-button {
+            display: block; /* 显示箭头 */
+            height: 6px; /* 设置箭头的高度 */
+            background-color: #e5e5e5; /* 设置箭头的背景色 */
+        }
+        
+        .script-columns {
+            flex: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--r-margin-big);
+            margin-left: var(--r-margin-small);
+            margin-right: var(--r-margin-small);
+            margin-bottom: var(--r-margin-small);
+        }
+
+        .script-panel {
+            background: white;
+        }
+
+        .panel-header {
+            color: #0288d1;
+            background-color: #d1eefe;
+            padding: 12px;
+            font-weight: 600;
+            border-bottom: 1px solid #ced4da;
+            display: flex;  /* 新增 */
+            justify-content: space-between;  /* 新增 */
+            align-items: center;  /* 新增 */
+        }
+        
+        .action-area {
+            flex: 1; /* 占据 1/3 的剩余高度 */
+        }
+
+        .textarea_common 
+        {
+            resize           : none;                                     /* 固定尺寸，不能拖动改变大小 */
+            background-color : #fafafa;                                /* 背景色为灰色 */
+            color            : #212121;                                /* 文字颜色为灰色 */
+            outline          : none;                                     /* 移除聚焦时的高亮边框 */
+            box-shadow       : none;                                     /* 移除聚焦时的阴影 */
+            width            : 100%;                                     /* 设置宽度为100% */
+            box-sizing       : border-box;                               /* 确保内边距和边框不会增加宽度 */
+            border           : 0.5px solid rgba(0, 0, 0, 0.12);        /* 设置边框为黑色实线，宽度为0.5像素 */
+        }
+
+        /* 新增ConfirmDialog专属样式 */
+        #ConfirmDialog {
+            width: 60%;  /* 控制对话框宽度为屏幕60% */
+            height: auto; /* 高度自适应内容 */
+        }
+
+        #ConfirmDialog .border {
+            padding: var(--r-margin-big); /* 增加内边距 */
+            min-height: 200px; /* 最小高度保证美观 */
+        }
+
+        #ConfirmDialog p {
+            flex-grow: 1; /* 让提示文字区域自动扩展 */
+            margin: var(--r-margin-big) 0; /* 调整文字间距 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left border">
+            <a href="#" class="tab active" onclick="showOption(this, 'patch_proc')">Device Properity Edit</a>
+            <a href="#" class="tab" onclick="showOption(this, 'auto_script_generate')">YAML Edit</a><br>
+        </div>
+        <div class="right border" id="auto_script_generate" style="display:none;">
+            <div class="right_down" id="auto_script_modify" style="display:none;">
+                <ul id="item-list">
+                    {% for item in script_items %}
+                    <li class="list-item">
+                        <span>{{ item.alias }}</span>
+                        <button type="button" onclick="openTextDialog('{{ item.alias }}', '{{ item.id }}')">Edit</button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="right border" id="patch_proc" style="display:none;">
+            <div class="right_up">
+                <ul>
+                    <li><a href="#" class="right-tab active" onclick="showDownOption(this, 'area_patch')">Area Properity Edit</a></li>
+                    <li><a href="#" class="right-tab" onclick="showDownOption(this, 'label_patch')">Label Properity Edit</a></li>
+                </ul>
+            </div>
+            <hr class="block_divider">
+            <form action="/submit" method="post">
+                <div class="right_down" id="area_patch" style="display:none;">
+                    <ul id="item-list">
+                        {% for item in area_items %}
+                        <li class="list-item">
+                            <span>{{ item.name }}</span>
+                            <button type="button" onclick="openAreaListDialog('{{ item.name }}', '{{ item.area_id }}', 'add')">Move In</button>
+                            <button type="button" onclick="openAreaListDialog('{{ item.name }}', '{{ item.area_id }}', 'del')">Move Out</button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="right_down" id="label_patch" style="display:none;">
+                    <ul id="item-list">
+                        {% for item in label_items %}
+                        <li class="list-item">
+                            <span>{{ item.name }}</span>
+                            <button type="button" onclick="openLabelsListDialog('{{ item.name }}', '{{ item.label_id }}', 'add')">Move In</button>
+                            <button type="button" onclick="openLabelsListDialog('{{ item.name }}', '{{ item.label_id }}', 'del')">Move Out</button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="ListDialog" class="dialog">
+        <div id="ListDialog-block-border" class="border">
+            <h3 id="ListDialog-title" style="margin: var(--r-margin-big); text-align: center;"></h3>
+            <hr class="block_divider">
+            <div id='ListDialog-block-list' style="overflow-y: auto;">
+                <ul id="ListDialog-list">
+                    <!-- List items will be inserted here -->
+                </ul>
+            </div>
+            <div id="ListDialog-block-button">
+                <hr class="block_divider">
+                <div id="ListDialog-button-container" class="button-container">
+                    <button type="button" onclick="cancelListDialog()">Cancel</button>
+                    <button type="button" onclick="applyListDialog()">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="TextDialog" class="dialog ">
+        <div class="border">
+            <h3 id="TextDialog-title"  style="margin: var(--r-margin-big); text-align: center;"></h3>
+            <div id="script-columns" class="script-columns">
+                <div id="origin-panel" class="script-panel">
+                    <div id="origin-panel-header" class="panel-header">Origin Script YAML</div>
+                    <textarea id="originScript" class="textarea_common" readonly></textarea>
+                </div>
+                <div id="modify-panel" class="script-panel">
+                    <div id="modify-panel-header" class="panel-header">Modified Script YAML</div>
+                    <textarea id="modifyScript" class="textarea_common"></textarea>
+                    <div id="modify-button-area" class="button-container">
+                        <button id="text-apply-button" type="button" onclick="applyTextDialog()">Save YAML</button>
+                    </div>
+                </div>
+            </div>
+            <div id="ask-area" class="action-area">
+                <textarea id="editContent" class="textarea_common" placeholder="Please input request to ask AI"></textarea>
+                <div id="ask-button-area" class="button-container">
+                    <button type="button" onclick="cancelTextDialog()">Cancel</button>
+                    <button type="button" onclick="askTextDialog(this)">Ask AI</button> <!-- 传递 this 作为参数 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ConfirmDialog" class="dialog">
+        <div class="border">
+            <h3 style="margin: var(--r-margin-big); text-align: center;">Please Confirm</h3>
+            <hr class="block_divider">
+            <p style="margin: var(--r-margin-big);">The automations.yaml will be modified. Please carefully check and caution</p>
+            <div class="button-container">
+                <button type="button" onclick="hideConfirmDialog()">Cancel</button>
+                <button type="button" onclick="confirmApply()">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script>
+        var g_area_id;
+        var g_area_name;
+        var g_label_id;
+        var g_label_name;
+        var g_device_list;
+        var g_area_action;
+        var g_is_area;
+        var g_script_id;
+
+        function showOption(tab, optionId) {
+            // 获取所有标签页
+            var tabs = document.querySelectorAll('.tab');
+            // 移除所有标签页的 active 类
+            tabs.forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+            // 为当前标签页添加 active 类
+            tab.classList.add('active');
+
+            // 隐藏所有选项
+            document.querySelectorAll('.right').forEach(function(option) 
+            {
+                option.style.display = 'none';
+            });
+            // 显示选中的选项
+            document.getElementById(optionId).style.display = 'block';
+            // console.log("optionid: ", optionId);
+            if(optionId == "auto_script_generate")
+            {
+                // console.log("auto_script_modify");
+                document.getElementById("auto_script_modify").style.display = 'block';
+            }
+        }
+
+        function showDownOption(tab, optionId) {
+            // 获取所有标签页
+            var tabs = document.querySelectorAll('.right-tab');
+            // 移除所有标签页的 active 类
+            tabs.forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+            // 为当前标签页添加 active 类
+            tab.classList.add('active');
+
+            // 隐藏所有选项
+            document.querySelectorAll('.right_down').forEach(function(option) 
+            {
+                option.style.display = 'none';
+            });
+            // 显示选中的选项
+            document.getElementById(optionId).style.display = 'block';
+        }
+
+        // 确保在页面加载时默认选定的标签页被正确应用
+        window.onload = function() {
+            var defaultTab = document.querySelector('.tab.active');
+            if (defaultTab) {
+                showOption(defaultTab, 'patch_proc');
+            }
+            var defaultRightTab = document.querySelector('.right-tab.active');
+            if (defaultRightTab) {
+                showDownOption(defaultRightTab, 'area_patch');
+            }
+        };
+
+        function handleTexDialogLoad() {
+            // 获取 --r-margin-small 的值
+            var root = document.documentElement;
+            var rMarginSmall = parseFloat(getComputedStyle(root).getPropertyValue('--r-margin-small'));
+
+            // 计算 editContent 的高度
+            var askArea = document.getElementById('ask-area');
+            var askButtonArea = document.getElementById('ask-button-area');
+            var editContent = document.getElementById('editContent');
+        
+            // 获取 ask-area 的高度
+            var askAreaHeight = askArea.getBoundingClientRect().height;
+            var askAreaWidth  = askArea.getBoundingClientRect().width;
+        
+            // 获取 ask-button-area 的高度和上下 margin
+            var askButtonAreaHeight = askButtonArea.getBoundingClientRect().height;
+            var marginTop = parseFloat(window.getComputedStyle(askButtonArea).marginTop);
+            var marginBottom = parseFloat(window.getComputedStyle(askButtonArea).marginBottom);
+        
+            // 计算 editContent 的高度
+            var editContentHeight = askAreaHeight - askButtonAreaHeight - marginTop - marginBottom;
+            var editContentWidth  = askAreaWidth - 2 * rMarginSmall;
+        
+            // 设置 editContent 的高度
+            editContent.style.height = editContentHeight + 'px';
+            editContent.style.width  = editContentWidth  + 'px';
+
+            // 设置 editContent 的 margin
+            editContent.style.marginLeft = rMarginSmall + 'px';
+            editContent.style.marginRight = rMarginSmall + 'px';
+            
+            // 计算 script-columns 的高度
+            var scriptColumns             = document.getElementById('script-columns');
+            var scriptColumnsHeight       = scriptColumns.getBoundingClientRect().height;
+            var scriptColumnsMarginBottom = parseFloat(window.getComputedStyle(scriptColumns).marginBottom);
+            
+            // 计算 originScript 的高度
+            var originPanelHeader = document.getElementById('origin-panel-header');
+            var originScript = document.getElementById('originScript');
+            var originPanelHeaderHeight = originPanelHeader.getBoundingClientRect().height;
+            var originScriptHeight = scriptColumnsHeight - originPanelHeaderHeight - scriptColumnsMarginBottom;
+            console.log('scriptColumnsHeight:', scriptColumnsHeight, 
+                        'originPanelHeaderHeight:', originPanelHeaderHeight, 
+                        'orignScriptHeight:', originScriptHeight,
+                        'scriptColumnsMarginBottom:', scriptColumnsMarginBottom);
+            originScript.style.height = originScriptHeight + 'px';
+        
+            // 计算 modifyScript 的高度
+            var modifyPanelHeader = document.getElementById('modify-panel-header');
+            var modifyButtonArea = document.getElementById('modify-button-area');
+            var modifyScript = document.getElementById('modifyScript');
+            var modifyPanelHeaderHeight = modifyPanelHeader.getBoundingClientRect().height;
+            var modifyButtonAreaHeight = modifyButtonArea.getBoundingClientRect().height;
+            var modifyButtonAreaMarginTop = parseFloat(window.getComputedStyle(modifyButtonArea).marginTop);
+            var modifyButtonAreaMarginBottom = parseFloat(window.getComputedStyle(modifyButtonArea).marginBottom);
+            var modifyScriptHeight = scriptColumnsHeight - modifyPanelHeaderHeight - scriptColumnsMarginBottom - modifyButtonAreaHeight - modifyButtonAreaMarginTop - modifyButtonAreaMarginBottom;
+            console.log('scriptColumnsHeight:', scriptColumnsHeight, 
+                        'modifyPanelHeaderHeight:', modifyPanelHeaderHeight, 
+                        'scriptColumnsMarginBottom', scriptColumnsMarginBottom,
+                        'modifyButtonAreaHeight:', modifyButtonAreaHeight,
+                        'modifyButtonAreaMarginTop:', modifyButtonAreaMarginTop,
+                        'modifyButtonAreaMarginBottom:', modifyButtonAreaMarginBottom,);
+            modifyScript.style.height = modifyScriptHeight + 'px';
+
+            // 设置 text-apply-button 的 rightMargin
+            var textApplyButton = document.getElementById('text-apply-button');
+            textApplyButton.style.marginRight = '0px';
+        }
+        
+        function openTextDialog(script_alias, script_id) {
+            var TextDialog      = document.getElementById('TextDialog');
+            var TextDialogTitle = document.getElementById('TextDialog-title');
+            var originScript    = document.getElementById('originScript');
+            var editContent     = document.getElementById('editContent');
+            var modifyScript    = document.getElementById('modifyScript');
+            
+            g_script_id = script_id;
+            // console.log('alias:', script_alias);
+            // console.log('id:', script_id);
+
+            TextDialogTitle.textContent = script_alias;
+            originScript.value = '';
+            editContent.value  = '';
+            modifyScript.value = '';
+
+            script_item = {
+                script_id  : script_id
+            };
+            // 向Flask后端发送POST请求，传递数据并获取响应数据
+            fetch('script_edit/get_orgin_script', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(script_item)
+            })
+            .then(response => response.json())
+            .then(function(data){
+                // console.log('data:', data.script_text);
+                // 获取 originScript 元素
+                var originScript = document.getElementById('originScript');
+                // 修改 textarea 的文本内容
+                originScript.value = data.script_text;
+            })
+            TextDialog.style.display = 'block';
+            handleTexDialogLoad();
+        }
+
+        function cancelTextDialog() {
+            var TextDialog = document.getElementById('TextDialog');
+            TextDialog.style.display = 'none';
+        }
+
+        function applyTextDialog() {
+            var modifyContent = document.getElementById('modifyScript');
+            modify_item = {
+                script_id      : g_script_id,
+                modifyContent  : modifyContent.value
+            };
+            event.preventDefault();
+            // 向Flask后端发送POST请求，传递数据并获取响应数据
+            fetch('script_edit/apply_modify_script', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(modify_item)
+            })
+            .then(response => response.json())
+            .then(function(data){
+                // console.log('data:', data.script_text);
+                // 获取 originScript 元素
+                var originScript = document.getElementById('originScript');
+                // 修改 textarea 的文本内容
+                originScript.value = data.script_text;
+            })
+        }
+
+        // 分离出来的实际执行保存的函数
+        function doApplyModify() {
+            var modifyContent = document.getElementById('modifyScript');
+            var modify_item = {
+                script_id: g_script_id,
+                modifyContent: modifyContent.value
+            };
+            
+            fetch('script_edit/apply_modify_script', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(modify_item)
+            })
+            .then(response => response.json())
+            .then(function(data){
+                var originScript = document.getElementById('originScript');
+                originScript.value = data.script_text;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function showConfirmDialog() {
+            document.getElementById('ConfirmDialog').style.display = 'block';
+        }
+    
+        function hideConfirmDialog() {
+            document.getElementById('ConfirmDialog').style.display = 'none';
+        }
+    
+        function confirmApply() {
+            hideConfirmDialog();
+            doApplyModify(); // 实际执行保存的函数
+        }
+    
+        // 修改后的 applyTextDialog 函数
+        function applyTextDialog() {
+            showConfirmDialog(); // 先显示确认对话框
+        }
+    
+        function askTextDialog(button) {
+            var originalText = button.innerHTML;
+            // 修改按钮的文字颜色和背景色
+            button.style.color           = 'grey'; // 文字颜色
+            button.style.backgroundColor = 'white'; // 背景色
+            button.disabled = true; // 禁用按钮
+
+            // 替换按钮文本为转圈动画
+            button.innerHTML = '<span class="loading-spinner"></span> Waiting AI response...';
+
+            // 修改 loading-spinner 的宽度和高度
+            var spinner = button.querySelector('.loading-spinner');
+            if (spinner) {
+                // 获取按钮的实际高度
+                var buttonHeight     = button.getBoundingClientRect().height;
+                console.log('buttonHeight:', buttonHeight);
+                spinner.style.width  = buttonHeight + 'px'; // 修改宽度
+                spinner.style.height = buttonHeight + 'px'; // 修改高度
+            }
+
+            var editContent = document.getElementById('editContent');
+            edit_item = {
+                script_id    : g_script_id,
+                editContent  : editContent.value
+            };
+            event.preventDefault();
+            // 向Flask后端发送POST请求，传递数据并获取响应数据
+            fetch('script_edit/ask_modify_request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(edit_item)
+            })
+            .then(response => response.json())
+            .then(function(data){
+                // console.log('data:', data.script_text);
+                // 获取 modifyScript 元素
+                var modifyScript = document.getElementById('modifyScript');
+                // 修改 textarea 的文本内容
+                modifyScript.value = data.script_text;
+                // 恢复按钮文本
+                button.innerHTML = originalText;
+                button.disabled = false; // 启用按钮
+                // 恢复按钮的文字颜色和背景色
+                button.style.color = ''; 
+                button.style.backgroundColor = ''; 
+            })
+            .catch(function(error) {
+                // 恢复按钮文本
+                button.innerHTML = originalText;
+                button.disabled = false; // 启用按钮
+                // 恢复按钮的文字颜色和背景色
+                button.style.color = ''; 
+                button.style.backgroundColor = ''; 
+                console.error('Asking err: ', error);
+            });
+        }
+
+        function handleListDialogLoad() {
+            // 计算 max-height
+            var dialogList     = document.getElementById('ListDialog-block-list');
+            var dialogHeight   = document.getElementById('ListDialog').getBoundingClientRect().height;
+            console.log('dialogHeight:', dialogHeight);
+            // title height
+            var titleElement   = document.getElementById('ListDialog-title');
+            var marginTop      = parseFloat(window.getComputedStyle(titleElement).marginTop);
+            var marginBottom   = parseFloat(window.getComputedStyle(titleElement).marginBottom);
+            var titleHeight    = titleElement.getBoundingClientRect().height + marginTop + marginBottom;
+            console.log('titleHeight:', titleHeight, 'marginTop:', marginTop, 'marginBottom:', marginBottom);
+            // button height
+            var buttonElement  = document.getElementById('ListDialog-button-container');
+            marginTop          = parseFloat(window.getComputedStyle(buttonElement).marginTop);
+            marginBottom       = parseFloat(window.getComputedStyle(buttonElement).marginBottom);
+            var buttonsHeight  = buttonElement.getBoundingClientRect().height + marginTop + marginBottom;
+            console.log('buttonsHeight:', buttonsHeight, 'marginTop:', marginTop, 'marginBottom:', marginBottom);
+            // border margin
+            var borderStyle     = window.getComputedStyle(document.getElementById('ListDialog-block-border'));
+            marginTop      = parseFloat(borderStyle.marginTop);
+            marginBottom   = parseFloat(borderStyle.marginBottom);
+            var maxHeight      = dialogHeight - titleHeight - buttonsHeight - marginTop - marginBottom;
+            console.log('max:', maxHeight, 'marginTop:', marginTop, 'marginBottom:', marginBottom);
+            dialogList.style.maxHeight = maxHeight + 'px';
+        }
+
+        function openAreaListDialog(area_name, area_id, action) {
+            var ListDialog = document.getElementById('ListDialog');
+            var ListDialogTitle = document.getElementById('ListDialog-title');
+            var ListDialogList = document.getElementById('ListDialog-list');
+            var listItems = ['Detail 1', 'Detail 2', 'Detail 3'];
+
+            g_area_id     = area_id;
+            g_area_name   = area_name;
+            g_area_action = action;
+            g_is_area     = true;
+
+            switch (action) {
+                case 'add':
+                    ListDialogTitle.textContent = 'Move in to' + area_name;
+                    break;
+                case 'del':
+                    ListDialogTitle.textContent = 'Move out from' + area_name;
+                break;
+                default:
+                    ListDialogTitle.textContent = 'undefined';
+                    break;
+            }
+            ListDialogList.innerHTML = ''; // Clear previous list items
+
+            area_info = {
+                area_op  : 'get_device_list',
+                area_id  : area_id,
+                action   : action
+            };
+
+            // 向Flask后端发送POST请求，传递数据并获取响应数据
+            fetch('area_operate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(area_info)
+            })
+            .then(response => response.json())
+            .then(function(data){
+                // console.log('data:', data);
+                // console.log('device_list:', data.device_list);
+                g_device_list = data.device_list;
+                
+                data.device_list.forEach(item=> {
+                    const listItem = document.createElement('li');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'checkbox';
+                    listItem.appendChild(document.createTextNode(item.name));
+                    listItem.appendChild(checkbox);
+                    ListDialogList.appendChild(listItem);
+                });
+            })   
+
+            ListDialog.style.display = 'block';
+            handleListDialogLoad();
+        }
+
+        function openLabelsListDialog(label_name, label_id, action) {
+            var ListDialog = document.getElementById('ListDialog');
+            var ListDialogTitle = document.getElementById('ListDialog-title');
+            var ListDialogList = document.getElementById('ListDialog-list');
+            var listItems = ['Detail 1', 'Detail 2', 'Detail 3'];
+
+            g_label_id     = label_id;
+            g_label_name   = label_name;
+            g_label_action = action;
+            g_is_area      = false;
+
+            switch (action) {
+                case 'add':
+                    ListDialogTitle.textContent = 'Move in to' + label_name;
+                    break;
+                case 'del':
+                    ListDialogTitle.textContent = 'Move out from' + label_name;
+                break;
+                default:
+                    ListDialogTitle.textContent = 'undefined';
+                    break;
+            }
+            ListDialogList.innerHTML = ''; // Clear previous list items
+
+            label_info = {
+                label_op  : 'get_device_list',
+                label_id  : label_id,
+                action    : action
+            };
+
+            // 向Flask后端发送POST请求，传递数据并获取响应数据
+            fetch('label_operate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(label_info)
+            })
+            .then(response => response.json())
+            .then(function(data){
+                // console.log('data:', data);
+                // console.log('device_list:', data.device_list);
+                g_device_list = data.device_list;
+                
+                data.device_list.forEach(item=> {
+                    const listItem = document.createElement('li');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'checkbox';
+                    listItem.appendChild(document.createTextNode(item.name));
+                    listItem.appendChild(checkbox);
+                    ListDialogList.appendChild(listItem);
+                });
+            })   
+
+            ListDialog.style.display = 'block';
+            handleListDialogLoad();
+        }
+
+        function cancelListDialog() {
+            var ListDialog = document.getElementById('ListDialog');
+            ListDialog.style.display = 'none';
+        }
+
+        function applyListDialog() {
+            // get selected items
+            const checkboxes = document.querySelectorAll('.checkbox');
+            const selectedItems = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    selectedItems.push(g_device_list[index]);
+                }
+            });
+            
+            if (g_is_area) {
+                op_info = {
+                    area_op    : 'send_device_list',
+                    area_id     : g_area_id,
+                    action      : g_area_action,
+                    device_list : selectedItems
+                };
+                op_path = 'area_operate';
+            }else {
+                op_info = {
+                    label_op    : 'send_device_list',
+                    label_id    : g_label_id,
+                    action      : g_label_action,
+                    device_list : selectedItems
+                };
+                op_path = 'label_operate';
+            }
+            // console.log('devices selected:', selectedItems);
+
+            // 向Flask后端发送POST请求，传递数据并获取响应数据
+            fetch(op_path, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(op_info)
+            })
+            .then(response => response.json())
+            .then(function(data){
+                g_device_list = data.device_list;
+                console.log('devices return:', data.device_list);
+                
+                // Clear existing list items
+                var ListDialogList = document.getElementById('ListDialog-list');
+                while (ListDialogList.firstChild) {
+                    ListDialogList.removeChild(ListDialogList.firstChild);
+                }
+                data.device_list.forEach(item=> {
+                    const listItem = document.createElement('li');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'checkbox';
+                    listItem.appendChild(document.createTextNode(item.name));
+                    listItem.appendChild(checkbox);
+                    ListDialogList.appendChild(listItem);
+                });
+            })
+        }
+    </script>
+</body>
+</html>
+
+<style>
+    @keyframes spin {
+        0% { 
+            transform: translate(-50%, -50%) rotate(0deg); 
+        }
+        100% { 
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    .loading-spinner {
+        border: 2px solid #0288d1;
+        border-left-color: white;
+        border-radius: 50%;
+        animation: spin 2s linear infinite; /* 将 linear 改为 steps(60) */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+    }
+</style>

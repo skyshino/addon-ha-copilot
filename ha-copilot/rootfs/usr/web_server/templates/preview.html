@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>脚本编辑器 - 对比模式</title>
+    <style>
+        .dialog-container {
+            width: 900px;
+            margin: 2rem auto;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .script-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .script-panel {
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+        }
+
+        .panel-header {
+            background: #e9ecef;
+            padding: 12px;
+            font-weight: 600;
+            border-bottom: 1px solid #ced4da;
+            display: flex;  // 新增
+            justify-content: space-between;  // 新增
+            align-items: center;  // 新增
+        }
+
+        .code-editor {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: none;
+            resize: none;
+            font-family: 'Consolas', monospace;
+            line-height: 1.5;
+        }
+
+        .instruction-box {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .submit-button {
+            background: #228be6;
+            /* 保持原有样式 */
+        }
+        /* 新增按钮样式 */
+        .cancel-button {
+            background: #868e96;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+        .apply-button {
+            background: #40c057;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        /* 移除 float: right */
+        }
+        /* 新增操作区域布局 */
+        .action-area {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .instruction-box {
+            flex: 1;
+            height: 80px;  /* 调整高度 */
+            /* 移除 resize: vertical */
+        }
+    </style>
+</head>
+<body>
+    <div class="dialog-container">
+        <div class="script-columns">
+            <div class="script-panel">
+                <div class="panel-header">原始脚本</div>
+                <textarea class="code-editor" readonly></textarea>
+            </div>
+            <div class="script-panel">
+                <div class="panel-header">修改后脚本</div>
+                <textarea class="code-editor" readonly></textarea>
+                <div style="display: flex; gap: 8px;">
+                    <button class="apply-button">应用生效</button>
+                </div>
+            </div>
+        </div>
+        <div class="action-area">
+            <textarea class="instruction-box" placeholder="请输入修改要求..."></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-button" style="padding: 6px 15px; border-radius: 15px;">请求修改</button>
+                <button class="cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

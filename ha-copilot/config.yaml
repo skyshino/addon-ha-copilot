@@ -1,0 +1,38 @@
+---
+name: ha-copilot
+version: 0.1.0
+slug: copilot
+description: ha-copliot add-on by skyshino
+author: skyshino
+maintainer: skyshino
+url: https://gitee.com/skyshino/addon-ha-copilot
+codenotary: skyshino@gmail.com
+ingress: true
+ingress_port: 6337
+ingress_stream: false
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armv7
+ports:
+  80/tcp: null
+ports_description:
+  80/tcp: Not required for Ingress
+hassio_api: true
+hassio_role: manager
+homeassistant_api: true
+host_network: true
+auth_api: true
+map:
+  - addons:rw
+  - all_addon_configs:rw
+  - backup:rw
+  - homeassistant_config:rw
+  - media:rw
+  - share:rw
+  - ssl:rw
+options:
+  log_level: info
+schema:
+  log_level: list(trace|debug|info|notice|warning|error|fatal)

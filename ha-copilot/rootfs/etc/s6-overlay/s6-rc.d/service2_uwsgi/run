@@ -1,0 +1,11 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Community Add-on: Example
+# Runs example2 script
+# ==============================================================================
+
+bashio::log.info "start uwsgi......"
+uwsgi --ini /usr/web_server/ha_copilot.ini
+
+#exec /usr/bin/example2.sh

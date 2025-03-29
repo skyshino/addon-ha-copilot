@@ -1,0 +1,13 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Community Add-on: Example
+# Runs example1 script
+# ==============================================================================
+
+bashio::log.info "nginx starting"
+
+#cat /etc/nginx/uwsgi_params
+exec nginx
+
+#exec /usr/bin/example1.sh

@@ -1,0 +1,7 @@
+---
+channel: stable
+addons:
+  adguard:
+    repository: addon-ha-copilot/ha-copilot
+    target: ha-copilot
+    image: ghcr.io/hassio-addons/adguard/{arch}
