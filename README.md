@@ -1,0 +1,1 @@
+# addon-ha-copilot
