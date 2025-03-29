@@ -34,8 +34,8 @@ check [the contributor's page][contributors].
 
 [forum]: https://community.home-assistant.io/t/ha-copilot-addon/869506
 [skyshino]: https://github.com/skyshino
-[contributors]: https://github.com/skyshino/ha_copilot/issues
-[docs]: https://github.com/skyshino/ha_copilot/blob/main/ha-copilot/DOCS.md
-[issue]: https://github.com/skyshino/ha_copilot/issues
-[releases]: https://github.com/skyshino/ha_copilot/releases
-[repository]: https://github.com/skyshino/ha_copilot
+[contributors]: https://github.com/skyshino/addon-ha-copilot/issues
+[docs]: https://github.com/skyshino/addon-ha-copilot/blob/main/ha-copilot/DOCS.md
+[issue]: https://github.com/skyshino/addon-ha-copilot/issues
+[releases]: https://github.com/skyshino/addon-ha-copilot/releases
+[repository]: https://github.com/skyshino/addon-ha-copilot

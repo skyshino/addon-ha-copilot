@@ -36,7 +36,7 @@ comparison to installing any other Home Assistant add-on.
 1. Click the Home Assistant My button below to add the repository to your Home
    Assistant instance's addon shop.
 
-    [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgitee.com%2Fskyshino%2Faddon-ha-copilot)
+    [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fskyshino%2Faddon-ha-copilot)
 
 2. Find the "ha-copilot" add-on in the Home Assistant add-on store and click it.
 3. Click the "Install" button to install the add-on.
@@ -126,12 +126,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-[addon-badge]: https://my.home-assistant.io/badges/supervisor_addon.svg
-[addon_github]: https://my.home-assistant.io/redirect/supervisor_addon/?addon=ha-copilot&repository_url=https%3A%2F%2Fgithub.com%2Fskyshino%2Fha_copilot
-[addon_gitee]: https://my.home-assistant.io/redirect/supervisor_addon/?repository_url=https%3A%2F%2Fgitee.com%2Fskyshino%2Fha-copilot&addon=ha-copilot
 [forum]: https://community.home-assistant.io/t/ha-copilot-addon/869506
 [skyshino]: https://github.com/skyshino
-[contributors]: https://github.com/skyshino/ha_copilot/issues
-[issue]: https://github.com/skyshino/ha_copilot/issues
-[releases]: https://github.com/skyshino/ha_copilot/releases
+[contributors]: https://github.com/skyshino/addon-ha-copilot/issues
+[issue]: https://github.com/skyshino/addon-ha-copilot/issues
+[releases]: https://github.com/skyshino/addon-ha-copilot/releases
 [semver]: http://semver.org/spec/v2.0.0.html
